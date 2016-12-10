@@ -21,15 +21,27 @@ type alias Card =
   , outputs : List String
   }
 
+
+type alias Column =
+  { index : Int
+  , cards : List Card
+  }
+
 type alias Model =
-  { cards : List Card
+  { columns : List Column
   }
 
 init : (Model, Cmd Msg)
 init =
   (Model
-  [ Card "Add" ["A", "B"] ["Result"]
-  , Card "Add" ["A", "B"] ["Result"]
+  [ Column 0
+    [ Card "Add" ["A", "B"] ["Result"]
+    , Card "Add" ["A", "B"] ["Result"]
+    ]
+  , Column 1
+    [ Card "Add" ["A", "B"] ["Result"]
+    , Card "Add" ["A", "B"] ["Result"]
+    ]
   ]
   , Cmd.none
   )
@@ -38,27 +50,51 @@ init =
 
 
 type Msg
-  = AddCard
+  = AddCard Int
   | Decrement
 
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
-  (Model (model.cards ++ [ Card "Add" ["A", "B"] ["Result"] ])
+  (updateModel msg model
   , Cmd.none
   )
 
+updateModel msg model =
+  Model (updateColumns msg model.columns)
 
+updateColumns : Msg -> List Column -> List Column
+updateColumns msg columns =
+  case msg of
+    AddCard column ->
+      map (\c ->
+        if c.index == column then
+          addCardToColumn c
+        else
+          c
+          ) columns
+    Decrement ->
+      columns
+
+addCardToColumn : Column -> Column
+addCardToColumn column =
+  Column column.index (column.cards ++ [ Card "Add" ["A", "B"] ["Result"] ])
 
 -- VIEW
 
 
 view : Model -> Html Msg
 view model =
-  div [canvasStyle] ((map cardView model.cards) ++
-  [ div [ onClick AddCard, buttonStyle ] [ text "Add Card" ]
-  ])
+  div [canvasStyle] ((map columnView model.columns))
 
+columnView : Column -> Html Msg
+columnView column =
+    div [columnStyle] ((map cardView column.cards) ++
+    [ div [ onClick (AddCard column.index), buttonStyle ] [ text "Add Card" ]
+    ])
+
+
+cardView : Card -> Html Msg
 cardView card =
   div [cardStyle] [
     div [cardHeaderStyle] [text card.name],
@@ -84,6 +120,10 @@ canvasStyle = style[
   ("background", "black"),
   ("height", "100%"),
   ("width", "100%")
+  ]
+
+columnStyle = style[
+  ("float", "left")
   ]
 
 cardStyle = style defaultElementAttributes
