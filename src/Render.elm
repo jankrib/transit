@@ -49,8 +49,8 @@ drawAddCardButton columnIndex maybeStarty =
       Just s -> s
       Nothing -> 20
   in
-    g [ transform ("translate(20," ++ toString (starty) ++ ")")]
-    ([ rect [ onClick (AddCard columnIndex), fill "#FFF", width "200", height "30", rx "5", ry "5" ] []
+    g [ transform ("translate(20," ++ toString (starty) ++ ")"), onClick (AddCard columnIndex)]
+    ([ rect [ fill "#FFF", width "200", height "30", rx "5", ry "5" ] []
     , drawTextField (100, 20) "middle" "Add card"
     ])
 
