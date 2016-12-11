@@ -1,7 +1,8 @@
-import Html exposing (Html, button, div, text)
+import Html exposing (Html, body, button, div, text)
 import Html.Events exposing (onClick)
 import Html.Attributes exposing (style)
-import List exposing (map)
+import Render
+import Model exposing (..)
 
 main =
   Html.program
@@ -15,21 +16,6 @@ main =
 
 -- MODEL
 
-type alias Card =
-  { name : String
-  , inputs : List String
-  , outputs : List String
-  }
-
-
-type alias Column =
-  { index : Int
-  , cards : List Card
-  }
-
-type alias Model =
-  { columns : List Column
-  }
 
 init : (Model, Cmd Msg)
 init =
@@ -67,7 +53,7 @@ updateColumns : Msg -> List Column -> List Column
 updateColumns msg columns =
   case msg of
     AddCard column ->
-      map (\c ->
+      List.map (\c ->
         if c.index == column then
           addCardToColumn c
         else
@@ -85,11 +71,13 @@ addCardToColumn column =
 
 view : Model -> Html Msg
 view model =
-  div [canvasStyle] ((map columnView model.columns))
+  body [canvasStyle] [Render.drawCanvas model]
+--view model =
+--  div [canvasStyle] ((List.map columnView model.columns))
 
 columnView : Column -> Html Msg
 columnView column =
-    div [columnStyle] ((map cardView column.cards) ++
+    div [columnStyle] ((List.map cardView column.cards) ++
     [ div [ onClick (AddCard column.index), buttonStyle ] [ text "Add Card" ]
     ])
 
@@ -110,14 +98,14 @@ clearFloat =
 
 cardColumnView direction parameters =
   div [cardColumnStyle direction]
-  (map (cardParameter direction) parameters)
+  (List.map (cardParameter direction) parameters)
 
 cardParameter direction parameter =
   div [cardParameterStyle direction] [text parameter]
 
 canvasStyle = style[
   ("position", "absolute"),
-  ("background", "black"),
+  ("background", "#DDD"),
   ("height", "100%"),
   ("width", "100%")
   ]
