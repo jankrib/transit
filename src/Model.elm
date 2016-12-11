@@ -1,6 +1,11 @@
 module Model exposing (..)
 
 
+type Msg
+  = AddCard Int
+  | Decrement
+
+
 type alias Card =
   { name : String
   , inputs : List String

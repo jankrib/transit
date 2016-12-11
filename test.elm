@@ -35,11 +35,6 @@ init =
 -- UPDATE
 
 
-type Msg
-  = AddCard Int
-  | Decrement
-
-
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   (updateModel msg model
