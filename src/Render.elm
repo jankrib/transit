@@ -6,6 +6,7 @@ import Svg.Attributes exposing (..)
 import Svg.Events exposing (..)
 import Model exposing (..)
 import Array
+import Dict
 
 drawCanvas : Model -> Html.Html Msg
 drawCanvas  model =
@@ -16,16 +17,16 @@ drawCanvas  model =
 
 drawColumn : Column -> Svg Msg
 drawColumn column =
-  g [ transform ("translate(" ++ toString (column.index * 300) ++ ", 10)")]
-  (drawCards column)
-
-drawCards : Column -> List (Svg Msg)
-drawCards column =
   let
-    drawInfo = List.scanl drawCard (0, Nothing) column.cards
+    drawInfo =
+      List.scanl drawCard (0, Nothing) column.cards
+
+    cardResult =
+      (List.filterMap (\(a, b) -> b) drawInfo)
+      ++ [drawAddCardButton column.index (List.maximum (List.map (\(a, b) -> a) drawInfo))]
   in
-    (List.filterMap (\(a, b) -> b) drawInfo)
-    ++ [drawAddCardButton column.index (List.maximum (List.map (\(a, b) -> a) drawInfo))]
+    g [ transform ("translate(" ++ toString (column.index * 300) ++ ", 10)")]
+    cardResult
 
 drawCard : Card -> (Int, Maybe (Svg msg)) -> (Int, Maybe (Svg msg))
 drawCard card (starty, svg) =
