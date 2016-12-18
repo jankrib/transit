@@ -27,9 +27,15 @@ init =
   , Column 1
     [ Card "Add" ["A", "B"] ["Result"]
     , Card "Add" ["A", "B"] ["Result"]
+    , Card "Add" ["A", "B"] ["Result"]
+    , Card "Add" ["A", "B", "C", "D"] ["Result"]
+    , Card "Add" ["A", "B"] ["Result"]
     ]
   ]
-  [ Connection (Address 0 0 0) (Address 1 0 0) ]
+  [ Connection (Address 0 0 0) (Address 1 1 0)
+  , Connection (Address 0 1 0) (Address 1 0 1)
+  , Connection (Address 0 1 0) (Address 1 3 3)
+  ]
   , Cmd.none
   )
 

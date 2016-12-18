@@ -5,7 +5,7 @@ import Svg exposing (..)
 import Svg.Attributes exposing (..)
 import Svg.Events exposing (..)
 import Model exposing (..)
-
+import Array
 
 drawCanvas : Model -> Html.Html Msg
 drawCanvas  model =
@@ -30,7 +30,8 @@ drawCards column =
 drawCard : Card -> (Int, Maybe (Svg msg)) -> (Int, Maybe (Svg msg))
 drawCard card (starty, svg) =
   let
-    calculatedHeight = 30 + 20 * (Basics.max (List.length card.inputs) (List.length card.outputs))
+    calculatedHeight =
+      calculateCardHeight card
   in
   (starty + calculatedHeight + 10, Just (
     g [ transform ("translate(20," ++ toString (starty) ++ ")")]
@@ -42,6 +43,9 @@ drawCard card (starty, svg) =
     )
     )
   )
+
+calculateCardHeight card =
+  30 + 20 * (Basics.max (List.length card.inputs) (List.length card.outputs))
 
 drawAddCardButton columnIndex maybeStarty =
   let
@@ -65,10 +69,61 @@ drawTextField (posX, posY) alignment caption =
 drawConnection : List Column -> Connection -> Svg Msg
 drawConnection columns connection =
   let
-    output = positionOutputAddress columns connection.outputId
+    output =
+      positionOutputAddress columns connection.outputId
+
+    input =
+      positionInputAddress columns connection.inputId
   in
-    polyline [ fill "none", stroke "red", strokeWidth "10", points "220,40 240,40 300,120 320,120" ] []
+    polyline [ fill "none", stroke "red", strokeWidth "10", points ((positionsToPoints output input)) ] [] --"200,40 240,40 300,120 320,120"
 
 positionOutputAddress : List Column -> Address -> (Int, Int)
-positionOutputAddress columns address=
-  (10, 10)
+positionOutputAddress columns address =
+  (address.columnId * 300 + 220, positionTopAddress columns address)
+
+positionInputAddress : List Column -> Address -> (Int, Int)
+positionInputAddress columns address =
+  (address.columnId * 300 + 20, positionTopAddress columns address)
+
+positionTopAddress : List Column -> Address -> Int
+positionTopAddress columns address =
+  let
+    columnArray =
+      Array.fromList columns
+
+    column =
+      Array.get address.columnId columnArray
+
+    cards =
+      case column of
+        Just c -> c.cards
+        Nothing -> []
+
+    cardsIndexed =
+      List.indexedMap (,) cards
+
+    cardHeights =
+      List.filterMap (someFunction address.cardId) cardsIndexed
+
+    starty =
+      List.sum cardHeights
+  in
+    5 + starty + address.connectorId * 20 + 35
+
+someFunction : Int -> (Int, Card) -> Maybe Int
+someFunction index (i, card) =
+  if i < index then
+    Just ((calculateCardHeight card) + 10)
+  else
+    Nothing
+
+positionsToPoints : (Int, Int) -> (Int, Int) -> String
+positionsToPoints (sx, sy) (ex, ey) =
+  let
+    opoints =
+      [ (sx, sy)
+      , (sx + 30, sy)
+      , (ex - 30, ey)
+      , (ex, ey)]
+  in
+    String.join " " (List.map (\(x, y) -> String.join "," [ toString x, toString y ]) opoints)
