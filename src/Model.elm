@@ -12,6 +12,10 @@ type alias Card =
   , outputs : List String
   }
 
+type alias Connection =
+  { outputId : Address
+  , inputId : Address
+  }
 
 type alias Column =
   { index : Int
@@ -20,4 +24,11 @@ type alias Column =
 
 type alias Model =
   { columns : List Column
+  , connections : List Connection
+  }
+
+type alias Address =
+  { columnId : Int
+  , cardId : Int
+  , connectorId : Int
   }

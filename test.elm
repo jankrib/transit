@@ -29,6 +29,7 @@ init =
     , Card "Add" ["A", "B"] ["Result"]
     ]
   ]
+  [ Connection (Address 0 0 0) (Address 1 0 0) ]
   , Cmd.none
   )
 
@@ -41,8 +42,9 @@ update msg model =
   , Cmd.none
   )
 
+updateModel : Msg -> Model -> Model
 updateModel msg model =
-  Model (updateColumns msg model.columns)
+  Model (updateColumns msg model.columns) model.connections
 
 updateColumns : Msg -> List Column -> List Column
 updateColumns msg columns =

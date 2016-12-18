@@ -11,7 +11,7 @@ drawCanvas : Model -> Html.Html Msg
 drawCanvas  model =
     svg [ width "100%", height "100%"] (
       (List.map drawColumn model.columns)
-      ++ [drawTest]
+      ++ (List.map (drawConnection model.columns) model.connections)
     )
 
 drawColumn : Column -> Svg Msg
@@ -62,5 +62,13 @@ drawTextField : (Int, Int) -> String -> String -> Svg msg
 drawTextField (posX, posY) alignment caption =
   text_ [ x (toString posX), y (toString posY), textAnchor alignment, fontFamily "Courier New"] [text caption]
 
-drawTest =
-  polyline [ fill "none", stroke "red", strokeWidth "10", points "220,40 240,40 300,120 320,120" ] []
+drawConnection : List Column -> Connection -> Svg Msg
+drawConnection columns connection =
+  let
+    output = positionOutputAddress columns connection.outputId
+  in
+    polyline [ fill "none", stroke "red", strokeWidth "10", points "220,40 240,40 300,120 320,120" ] []
+
+positionOutputAddress : List Column -> Address -> (Int, Int)
+positionOutputAddress columns address=
+  (10, 10)
