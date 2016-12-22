@@ -21,11 +21,11 @@ init : (Model, Cmd Msg)
 init =
   (Model
   [ Column 0
-    [ Card "Add" ["A", "B"] ["Result"]
-    , Card "Add" ["A", "B"] ["Result"]
+    [ Card "Parameters" [] ["Quantity"]
+    , Card "Static" [] ["Singular", "Plural"]
     ]
   , Column 1
-    [ Card "Add" ["A", "B"] ["Result"]
+    [ Card "Pluralize" ["Quantity", "Singular", "Plural"] ["Result"]
     , Card "Add" ["A", "B"] ["Result"]
     , Card "Add" ["A", "B"] ["Result"]
     , Card "Add" ["A", "B", "C", "D"] ["Result"]
